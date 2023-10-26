@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Compras</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Compras</h1>
+        <div id="lista">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unitário (R$)</th>
+                        <th>Valor Total (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="item-list">
+                    <!-- Itens da lista serão exibidos aqui -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                        <td id="total-value" style="text-align: center;"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <form id="item-form">
+            <input type="text" id="item-name" placeholder="Nome do item" required>
+            <input type="number" id="item-quantity" placeholder="Quantidade" required>
+            <input type="number" id="item-value" placeholder="Valor" step="0.01" required>
+            <button type="submit">Adicionar Item</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

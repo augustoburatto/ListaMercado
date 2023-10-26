@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 600px; /* Aumentando o tamanho do contêiner */
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+#item-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px; /* Defina o tamanho desejado para o formulário */
+    margin: 0 auto;
+}
+
+#item-form input {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    width: 100%; /* Preencher a largura do contêiner pai */
+}
+
+#item-form button {
+    padding: 5px 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%; /* Preencher a largura do contêiner pai */
+    max-width: 200px; /* Defina o tamanho desejado para o botão */
+    margin: 0 auto;
+}
+
+#lista table {
+    width: 100%; /* Preencher a largura do contêiner pai */
+    border-collapse: collapse;
+}
+
+#lista th, #lista td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+#lista th {
+    background: #f0f0f0;
+}
+
+#lista .remove-item {
+    color: red;
+    cursor: pointer;
+}
