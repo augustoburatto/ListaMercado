@@ -2,16 +2,12 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f0f0f0;
 }
 
 .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    padding: 10px;
 }
 
 h1 {
@@ -19,39 +15,44 @@ h1 {
 }
 
 #item-form {
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
+    max-width: 100%;
     margin: 0 auto;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #item-form input {
-    margin-bottom: 10px;
-    padding: 5px;
+    margin: 10px 0;
+    padding: 15px; /* Aumento do tamanho do campo de entrada */
     border: 1px solid #ddd;
     border-radius: 3px;
     width: 100%;
 }
 
 #item-form button {
-    padding: 5px 10px;
+    padding: 15px; /* Aumento do tamanho do botão */
     background: #007bff;
     color: #fff;
     border: none;
     border-radius: 3px;
     cursor: pointer;
     width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
 }
 
 #lista table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #lista th, #lista td {
-    padding: 10px;
+    padding: 15px; /* Aumento do tamanho das células da tabela */
     text-align: center;
     border: 1px solid #ddd;
 }
@@ -65,23 +66,23 @@ h1 {
     cursor: pointer;
 }
 
-/* Adicione media queries para telas menores (por exemplo, dispositivos móveis) */
+/* Adicione media queries para dispositivos móveis */
 
 @media screen and (max-width: 600px) {
-    .container {
-        max-width: 100%;
-        padding: 10px;
-    }
-
     #item-form {
-        max-width: 100%;
+        padding: 5px;
     }
 
     #item-form input, #item-form button {
-        max-width: 100%;
+        padding: 10px; /* Tamanho reduzido dos campos em dispositivos móveis */
     }
 
     #lista table {
-        max-width: 100%;
+        box-shadow: none;
+        border: none;
+    }
+
+    #lista th, #lista td {
+        padding: 10px; /* Tamanho reduzido das células da tabela em dispositivos móveis */
     }
 }
