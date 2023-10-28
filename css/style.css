@@ -3,37 +3,50 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
     max-width: 100%;
     padding: 10px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
     text-align: center;
 }
 
+#lista {
+    flex-grow: 1;
+    overflow-y: auto; /* Adicionando rolagem para a lista */
+}
+
 #item-form {
     max-width: 100%;
-    margin: 0 auto;
     padding: 10px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
 }
 
 #item-form input {
-    margin: 10px 0;
-    padding: 15px; /* Aumento do tamanho do campo de entrada */
+    margin: 5px 0;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 3px;
     width: 100%;
 }
 
 #item-form button {
-    padding: 15px; /* Aumento do tamanho do botão */
+    padding: 10px;
     background: #007bff;
     color: #fff;
     border: none;
@@ -52,7 +65,7 @@ h1 {
 }
 
 #lista th, #lista td {
-    padding: 15px; /* Aumento do tamanho das células da tabela */
+    padding: 10px;
     text-align: center;
     border: 1px solid #ddd;
 }
@@ -74,7 +87,7 @@ h1 {
     }
 
     #item-form input, #item-form button {
-        padding: 10px; /* Tamanho reduzido dos campos em dispositivos móveis */
+        padding: 10px;
     }
 
     #lista table {
@@ -83,6 +96,6 @@ h1 {
     }
 
     #lista th, #lista td {
-        padding: 10px; /* Tamanho reduzido das células da tabela em dispositivos móveis */
+        padding: 10px;
     }
 }

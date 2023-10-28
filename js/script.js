@@ -1,6 +1,6 @@
 $(document).ready(function() {
     let totalValue = 0;
-    const itemList = JSON.parse(localStorage.getItem('itemList')) || [];
+    let itemList = JSON.parse(localStorage.getItem('itemList')) || [];
 
     function updateTotal() {
         totalValue = 0;
@@ -17,14 +17,17 @@ $(document).ready(function() {
 
     function renderItemList() {
         $("#item-list").empty();
-        itemList.forEach(function(item) {
+        itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
+
+        itemList.forEach(function(item, index) {
             const unitValue = item.unitValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             const totalValue = (item.quantity * item.unitValue).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-            const newRow = `<tr>
+            const newRow = `<tr data-index="${index}">
                 <td>${item.name}</td>
                 <td class="item-quantity">${item.quantity.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                 <td class="item-unit-value">${unitValue}</td>
                 <td class="item-total-value">${totalValue}</td>
+                <td><input type="checkbox" class="item-taken" ${item.taken ? 'checked' : ''}></td>
                 <td><span class="remove-item">Remover</span></td>
             </tr>`;
             $("#item-list").append(newRow);
@@ -52,10 +55,23 @@ $(document).ready(function() {
     });
 
     $("#item-list").on("click", ".remove-item", function() {
-        const rowIndex = $(this).closest("tr").index();
+        const rowIndex = $(this).closest("tr").data("index");
         itemList.splice(rowIndex, 1);
         saveItemList();
         renderItemList();
         updateTotal();
+    });
+
+    $("#item-list").sortable({
+        update: function(event, ui) {
+            const newIndex = ui.item.index();
+            const oldIndex = ui.item.data("index");
+
+            const tempItem = itemList[newIndex];
+            itemList[newIndex] = itemList[oldIndex];
+            itemList[oldIndex] = tempItem;
+
+            saveItemList();
+        }
     });
 });
