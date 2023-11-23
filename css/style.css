@@ -42,7 +42,7 @@ h1 {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 3px;
-    width: 100%;
+    width: auto;
 }
 
 #item-form button {
@@ -52,7 +52,8 @@ h1 {
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    width: 100%;
+    width: auto;
+    font-size: 16px;
 }
 
 #lista table {
@@ -87,6 +88,9 @@ h1 {
     border-radius: 3px;
     cursor: pointer;
     margin-bottom: 10px;
+    top: 10px;
+    right: 10px;
+    font-size: 16px;
 }
 
 #import-label {
@@ -97,18 +101,9 @@ h1 {
     border-radius: 3px;
     cursor: pointer;
     margin-bottom: 10px;
-}
-
-#export-button {
-    position: absolute;
-    top: 10px;
-    right: 125px;
-}
-
-#import-label {
-    position: absolute;
     top: 10px;
     right: 10px;
+    text-align: center;
 }
 
 /* Adicione media queries para dispositivos móveis */
