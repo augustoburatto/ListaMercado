@@ -86,7 +86,7 @@ h1 {
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    margin-bottom: 10px; /* Espaço entre os botões e a tabela */
+    margin-bottom: 10px;
 }
 
 #import-label {
@@ -96,7 +96,7 @@ h1 {
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    margin-bottom: 10px; /* Espaço entre os botões e a tabela */
+    margin-bottom: 10px;
 }
 
 #export-button {
