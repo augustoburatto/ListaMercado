@@ -34,6 +34,40 @@ $(document).ready(function() {
         });
     }
 
+    function exportCSV() {
+        const csvContent = "data:text/csv;charset=utf-8," + itemList.map(item => `${item.name};${item.quantity};${item.unitValue}`).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "lista_compras.csv");
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    function importCSV(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const csvData = e.target.result;
+            const lines = csvData.split("\n");
+            itemList = [];
+            lines.forEach(function(line) {
+                const values = line.split(";");
+                if (values.length === 3) {
+                    const itemName = values[0].trim();
+                    const itemQuantity = parseFloat(values[1].trim());
+                    const itemValue = parseFloat(values[2].trim());
+                    if (itemName !== "" && itemQuantity > 0 && itemValue > 0) {
+                        itemList.push({ name: itemName, quantity: itemQuantity, unitValue: itemValue, taken: false });
+                    }
+                }
+            });
+            saveItemList();
+            renderItemList();
+            updateTotal();
+        };
+        reader.readAsText(file);
+    }
+
     updateTotal();
     renderItemList();
 
@@ -73,5 +107,14 @@ $(document).ready(function() {
 
             saveItemList();
         }
+    });
+
+    $("#export-button").on("click", function() {
+        exportCSV();
+    });
+
+    $("#import-file").on("change", function() {
+        const file = this.files[0];
+        importCSV(file);
     });
 });
