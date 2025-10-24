@@ -17,7 +17,7 @@ $(document).ready(function() {
 
     function renderItemList() {
         $("#item-list").empty();
-        itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
+        // itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
 
         itemList.forEach(function(item, index) {
             const unitValue = item.unitValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
