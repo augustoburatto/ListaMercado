@@ -12,6 +12,12 @@ $(document).ready(function() {
     }
 
     function saveItemList() {
+        $(".item-taken").each(function()
+        {
+            var idx = $(this).parents('tr').data('index');
+            itemList[idx]['taken'] = $(this).prop('checked');
+        });
+
         localStorage.setItem('itemList', JSON.stringify(itemList));
     }
 
