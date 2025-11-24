@@ -5,9 +5,6 @@ $(document).ready(function() {
     function updateTotal() {
         totalValue = 0;
         itemList.forEach(function(item) {
-            if (item === null) {
-                return;
-            }
             const totalItemValue = item.quantity * item.unitValue;
             totalValue += totalItemValue;
         });
@@ -23,10 +20,6 @@ $(document).ready(function() {
         // itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
 
         itemList.forEach(function(item, index) {
-            if (item === null) {
-                return;
-            }
-
             const unitValue = item.unitValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             const totalValue = (item.quantity * item.unitValue).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             const newRow = `<tr data-index="${index}">
@@ -207,12 +200,20 @@ $(document).ready(function() {
         updateTotal();
     });
 
-    $("#item-list").sortable({
-        update: function(event, ui) {
-            const newIndex = ui.item.index();
-            const oldIndex = ui.item.data("index");
+    let oldIndex;
 
-            itemList[newIndex] = itemList[oldIndex];
+    $("#item-list").sortable({
+        start: function(event, ui) {
+            oldIndex = ui.item.index();   // salva posição original antes de mover
+        },
+        update: function(event, ui) {
+            const newIndex = ui.item.index(); // posição final
+
+            // Pega o item removido
+            const movedItem = itemList.splice(oldIndex, 1)[0];
+
+            // Insere o item na nova posição
+            itemList.splice(newIndex, 0, movedItem);
 
             saveItemList();
         }
