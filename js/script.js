@@ -5,6 +5,9 @@ $(document).ready(function() {
     function updateTotal() {
         totalValue = 0;
         itemList.forEach(function(item) {
+            if (item === null) {
+                return;
+            }
             const totalItemValue = item.quantity * item.unitValue;
             totalValue += totalItemValue;
         });
@@ -26,6 +29,9 @@ $(document).ready(function() {
         // itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
 
         itemList.forEach(function(item, index) {
+            if (item === null) {
+                return;
+            }
             const unitValue = item.unitValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             const totalValue = (item.quantity * item.unitValue).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
             const newRow = `<tr data-index="${index}">
