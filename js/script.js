@@ -5,7 +5,7 @@ $(document).ready(function() {
     function updateTotal() {
         totalValue = 0;
         itemList.forEach(function(item) {
-            if (item === null) {
+            if (item === null || typeof item === 'undefined') {
                 return;
             }
             const totalItemValue = item.quantity * item.unitValue;
@@ -18,7 +18,10 @@ $(document).ready(function() {
         $(".item-taken").each(function()
         {
             var idx = $(this).parents('tr').data('index');
-            itemList[idx]['taken'] = $(this).prop('checked');
+            if (itemList[idx] === null || typeof itemList[idx] === 'undefined') {
+                return;
+            }
+            itemList[idx].taken = $(this).prop('checked');
         });
 
         localStorage.setItem('itemList', JSON.stringify(itemList));
@@ -29,7 +32,7 @@ $(document).ready(function() {
         // itemList = itemList.sort((a, b) => a.name.localeCompare(b.name)); // Ordenar a lista em ordem alfabética
 
         itemList.forEach(function(item, index) {
-            if (item === null) {
+            if (item === null || typeof item === 'undefined') {
                 return;
             }
             const unitValue = item.unitValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
