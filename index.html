@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carrinho — a lista da casa</title>
+<meta name="description" content="Lista de compras compartilhada. Todo mundo vê, todo mundo edita.">
+<meta name="theme-color" content="#16a34a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carrinho">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./assets/icone.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+
+<div id="aviso-demo" class="faixa faixa--demo" hidden>
+  <strong>Modo local.</strong> Os itens estão salvos só neste navegador.
+  Abra o <code>config.js</code> e preencha as chaves do Supabase para compartilhar a lista.
+</div>
+
+<div id="aviso-erro" class="faixa faixa--erro" hidden></div>
+
+<header class="topo">
+  <div class="topo__marca">
+    <svg class="topo__logo" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2 3h3l2.7 12.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.5L21.5 8H6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="10" cy="20.5" r="1.5" fill="currentColor"/>
+      <circle cx="18" cy="20.5" r="1.5" fill="currentColor"/>
+    </svg>
+    <span>Carrinho</span>
+  </div>
+  <div class="topo__acoes">
+    <span id="status-sync" class="sync" title="Sincronizado"><i></i><span class="sync__txt">sincronizado</span></span>
+    <button id="btn-compartilhar" class="btn-icone" type="button" title="Copiar link da lista" aria-label="Copiar link da lista">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12.2 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="folha">
+
+  <!-- Bloco recibo: o elemento-assinatura -->
+  <section class="recibo" aria-label="Resumo da lista">
+    <p class="recibo__eixo">lista compartilhada</p>
+    <h1 class="recibo__titulo">
+      <input id="titulo" class="titulo-input" value="Lista da casa" maxlength="48" aria-label="Nome da lista">
+    </h1>
+
+    <dl class="recibo__linhas">
+      <div><dt>Itens na lista</dt><dd id="n-total">0</dd></div>
+      <div><dt>Já no carrinho</dt><dd id="n-comprados">0</dd></div>
+      <div><dt>Gasto até agora</dt><dd id="v-comprado">R$ 0,00</dd></div>
+    </dl>
+
+    <div class="recibo__total">
+      <span>Total estimado</span>
+      <strong id="v-total">R$ 0,00</strong>
+    </div>
+
+    <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progresso das compras">
+      <div id="progresso-barra" class="progresso__barra"></div>
+    </div>
+  </section>
+
+  <!-- Adicionar -->
+  <form id="form-add" class="add" autocomplete="off">
+    <input id="in-nome" class="add__nome" type="text" placeholder="O que falta comprar?" maxlength="80" required aria-label="Nome do item">
+    <div class="add__numeros">
+      <label class="campo campo--qtd">
+        <span>Qtd</span>
+        <input id="in-qtd" type="text" inputmode="decimal" value="1" aria-label="Quantidade">
+      </label>
+      <label class="campo campo--preco">
+        <span>Preço un.</span>
+        <input id="in-preco" type="text" inputmode="decimal" placeholder="0,00" aria-label="Preço unitário">
+      </label>
+      <button class="btn btn--principal" type="submit">Adicionar</button>
+    </div>
+  </form>
+
+  <!-- Controles da lista -->
+  <div class="barra-lista">
+    <label class="alternador">
+      <input id="modo-mercado" type="checkbox">
+      <span class="alternador__pista" aria-hidden="true"><i></i></span>
+      <span class="alternador__rotulo">Modo mercado</span>
+    </label>
+    <button id="btn-limpar" class="btn btn--fantasma" type="button">Tirar os comprados</button>
+  </div>
+
+  <ul id="lista" class="lista"></ul>
+
+  <p id="vazio" class="vazio" hidden>
+    A lista está limpa.<br><span>Escreva o primeiro item aí em cima.</span>
+  </p>
+
+</main>
+
+<footer class="rodape">
+  <span id="rodape-modo">—</span>
+</footer>
+
+<div id="aviso" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="./config.js"></script>
+<script src="./assets/app.js"></script>
+</body>
+</html>
