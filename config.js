@@ -13,8 +13,8 @@
    ============================================================ */
 
 window.CONFIG = {
-  SUPABASE_URL: "https://rarnvyfsmreisldbrdnx.supabase.co",       // ex: "https://abcdefghijk.supabase.co"
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcm52eWZzbXJlaXNsZGJyZG54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4NTY5MDgsImV4cCI6MjEwMDQzMjkwOH0.Afjbl5nPa2oZmWPw6ARWNeF7JGD354rW9q4XzPUXiOo",  // ex: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+  SUPABASE_URL: "",       // ex: "https://abcdefghijk.supabase.co"
+  SUPABASE_ANON_KEY: "",  // ex: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
 
   // De quantos em quantos segundos buscar novidades dos outros.
   INTERVALO_SYNC: 4,

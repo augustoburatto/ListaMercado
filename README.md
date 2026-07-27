@@ -118,6 +118,11 @@ Confira se a URL em `config.js` não terminou com `/`, se a chave é a `anon` e 
 SQL rodou até o fim. A mensagem entre parênteses vem direto do Supabase e costuma
 dizer o que faltou.
 
+**Erro `42501` / `permission denied for table itens`**
+Faltaram os `GRANT` do começo do `supabase-schema.sql`. Rode o arquivo inteiro de
+novo — permissão de tabela e política de linha são coisas separadas no Postgres, e
+o Supabase precisa das duas.
+
 **A página abre sem estilo no GitHub Pages**
 A pasta `assets` não subiu junto, ou o arquivo `.nojekyll` ficou de fora.
 

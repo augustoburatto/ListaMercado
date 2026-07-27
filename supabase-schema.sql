@@ -10,9 +10,14 @@ create table if not exists public.itens (
   nome        text        not null,
   quantidade  numeric     not null default 1,
   preco       numeric     not null default 0,
+  categoria   text        not null default 'Mercearia',
   comprado    boolean     not null default false,
   criado_em   timestamptz not null default now()
 );
+
+-- se a tabela já existia de antes, garante a coluna nova
+alter table public.itens
+  add column if not exists categoria text not null default 'Mercearia';
 
 -- ---------- Nome da lista (e qualquer outro ajuste futuro) ----------
 create table if not exists public.config (
@@ -26,7 +31,24 @@ on conflict (chave) do nothing;
 
 
 -- ============================================================
---  Permissões
+--  Permissões — parte 1 de 2: GRANTs
+--
+--  Duas camadas independentes, e o Supabase exige as duas:
+--    GRANT    = "este papel pode encostar nesta tabela"
+--    POLICY   = "...e pode encostar nestas linhas"
+--  Sem o GRANT, o erro é 42501 / permission denied.
+-- ============================================================
+
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on public.itens  to anon, authenticated;
+grant select, insert, update, delete on public.config to anon, authenticated;
+
+grant usage, select on all sequences in schema public to anon, authenticated;
+
+
+-- ============================================================
+--  Permissões — parte 2 de 2: políticas de linha
 --  A lista é pública de propósito: quem tem o link lê e escreve.
 --  Se um dia quiser fechar, é aqui que se mexe.
 -- ============================================================

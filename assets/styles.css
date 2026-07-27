@@ -209,22 +209,32 @@ button, input{ font:inherit; color:inherit; }
 .add__nome::placeholder{ color:var(--tinta-suave); }
 .add__nome:focus{ outline:none; background:var(--cartao); border-color:var(--verde); }
 
-.add__numeros{ display:flex; align-items:flex-end; gap:8px; }
+.add__numeros{ display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; }
 
 .campo{ display:flex; flex-direction:column; gap:4px; }
 .campo > span{
   font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--tinta-suave);
   padding-left:2px;
 }
-.campo input{
+.campo input,
+.campo select{
   width:100%; padding:10px 11px;
   background:var(--papel); border:1px solid transparent; border-radius:10px;
   font-family:var(--numero); font-size:15px; font-variant-numeric:tabular-nums;
   transition:border-color .15s, background .15s;
 }
-.campo input:focus{ outline:none; background:var(--cartao); border-color:var(--verde); }
+.campo input:focus,
+.campo select:focus{ outline:none; background:var(--cartao); border-color:var(--verde); }
 .campo--qtd{ width:82px; flex:none; }
-.campo--preco{ flex:1 1 auto; min-width:0; }
+.campo--preco{ flex:1 1 90px; min-width:0; }
+.campo--cat{ flex:1 1 130px; min-width:0; }
+.campo--cat select{
+  font-family:var(--texto); font-size:14.5px;
+  appearance:none; -webkit-appearance:none;
+  padding-right:30px; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235d6f66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center; background-size:16px;
+}
 
 /* esconde as setinhas do input number */
 input[type=number]::-webkit-outer-spin-button,
@@ -250,6 +260,85 @@ input[type=number]{ -moz-appearance:textfield; }
 }
 .btn--fantasma:hover{ color:var(--alerta); border-color:var(--alerta); }
 .btn[disabled]{ opacity:.45; cursor:default; pointer-events:none; }
+
+/* ---------- Filtros: busca + ordenar ---------- */
+.filtros{
+  display:flex; gap:10px; align-items:stretch;
+}
+.busca{
+  position:relative; flex:1 1 auto; min-width:0;
+  display:flex; align-items:center;
+}
+.busca__lupa{
+  position:absolute; left:12px;
+  width:17px; height:17px; color:var(--tinta-suave); pointer-events:none;
+}
+.busca__campo{
+  width:100%; padding:11px 36px 11px 37px;
+  background:var(--cartao); border:1px solid var(--linha); border-radius:10px;
+  font-size:15px;
+  transition:border-color .15s;
+  -webkit-appearance:none; appearance:none;
+}
+.busca__campo::-webkit-search-cancel-button{ -webkit-appearance:none; }
+.busca__campo::placeholder{ color:var(--tinta-suave); }
+.busca__campo:focus{ outline:none; border-color:var(--verde); }
+.busca__limpar{
+  position:absolute; right:6px;
+  display:grid; place-items:center;
+  width:28px; height:28px; padding:0;
+  background:none; border:0; border-radius:7px;
+  color:var(--tinta-suave); cursor:pointer;
+}
+.busca__limpar svg{ width:15px; height:15px; }
+.busca__limpar:hover{ background:var(--papel); color:var(--tinta); }
+
+.ordenar{ display:flex; flex-direction:column; gap:4px; flex:none; }
+.ordenar > span{
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--tinta-suave);
+  padding-left:2px;
+}
+.ordenar select{
+  height:100%; padding:0 32px 0 12px;
+  background:var(--cartao); border:1px solid var(--linha); border-radius:10px;
+  font-size:14px; color:var(--tinta); cursor:pointer;
+  appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235d6f66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center; background-size:16px;
+  transition:border-color .15s;
+}
+.ordenar select:focus{ outline:none; border-color:var(--verde); }
+
+/* rótulo "Ordenar" some no mobile para caber lado a lado */
+@media (max-width:480px){
+  .ordenar > span{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .ordenar select{ padding-top:11px; padding-bottom:11px; }
+}
+
+/* ---------- Cabeçalho de categoria ---------- */
+.grupo-cab{
+  display:flex; align-items:center; gap:9px;
+  margin:6px 2px 0;
+  font-family:var(--numero);
+  font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--verde-escuro);
+}
+.grupo-cab::after{
+  content:""; flex:1 1 auto; height:0; border-top:1px dashed var(--linha);
+}
+.grupo-cab .n{ color:var(--tinta-suave); letter-spacing:.04em; }
+.lista .grupo-cab:first-child{ margin-top:0; }
+
+/* etiqueta de categoria no item */
+.selo{
+  display:inline-block; margin-right:6px;
+  padding:1px 7px; border-radius:99px;
+  font-family:var(--numero); font-size:10.5px; letter-spacing:.04em;
+  vertical-align:1px;
+}
+.selo--Mercearia { background:#e7f4dd; color:#3f6a1e; }
+.selo--Higiene   { background:#e2f0f7; color:#1f5f7a; }
+.selo--Congelados{ background:#e6ecf9; color:#33478f; }
 
 /* ---------- Barra da lista ---------- */
 .barra-lista{
@@ -358,7 +447,7 @@ body.mercado .item{ padding:17px 15px; }
 body.mercado .marca{ width:34px; height:34px; }
 body.mercado .marca svg{ width:18px; height:18px; }
 body.mercado .item__nome{ font-size:17.5px; }
-body.mercado .item__botoes{ display:none; }
+body.mercado .item__botoes .mini--remover{ display:none; }
 body.mercado .item.is-comprado{ opacity:.55; }
 
 /* ---------- Estados vazios / rodapé / toast ---------- */

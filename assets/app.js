@@ -28,6 +28,10 @@
     inNome: $("#in-nome"),
     inQtd: $("#in-qtd"),
     inPreco: $("#in-preco"),
+    inCat: $("#in-cat"),
+    inBusca: $("#in-busca"),
+    btnLimparBusca: $("#btn-limpar-busca"),
+    inOrdenar: $("#in-ordenar"),
     modoMercado: $("#modo-mercado"),
     btnLimpar: $("#btn-limpar"),
     btnCompartilhar: $("#btn-compartilhar"),
@@ -35,8 +39,13 @@
     avisoDemo: $("#aviso-demo"),
     avisoErro: $("#aviso-erro"),
     toast: $("#aviso"),
+    vazioBusca: $("#vazio-busca"),
     rodapeModo: $("#rodape-modo")
   };
+
+  var CATEGORIAS = ["Mercearia", "Higiene", "Congelados"];
+  var CAT_PADRAO = "Mercearia";
+  function catValida(c) { return CATEGORIAS.indexOf(c) > -1 ? c : CAT_PADRAO; }
 
   var dinheiro = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
   var numero = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 2 });
@@ -54,6 +63,11 @@
     return String(t).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
+  }
+
+  // minúsculas e sem acento, para a busca casar "acucar" com "açúcar"
+  function normal(t) {
+    return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
   /* ============================================================
@@ -171,6 +185,8 @@
   var itens = [];
   var editandoId = null;
   var ocupado = 0;
+  var busca = "";
+  var ordem = "adicionado"; // adicionado | categoria | nome
 
   /* ---------- indicador de sincronização ---------- */
   function sync(estado, texto) {
@@ -209,21 +225,73 @@
      ============================================================ */
   function totalItem(i) { return num(i.quantidade) * num(i.preco); }
 
-  function ordenar(lista) {
+  var ORDEM_CAT = { Mercearia: 0, Higiene: 1, Congelados: 2 };
+
+  // aplica busca e devolve a lista já ordenada conforme a escolha
+  function preparar(lista) {
     var mercado = document.body.classList.contains("mercado");
-    var copia = lista.slice();
-    if (mercado) {
-      copia.sort(function (a, b) { return (a.comprado ? 1 : 0) - (b.comprado ? 1 : 0); });
+    var alvo = normal(busca);
+
+    var visiveis = lista.filter(function (i) {
+      return !alvo || normal(i.nome).indexOf(alvo) > -1;
+    });
+
+    // guarda a posição original para servir de desempate estável
+    var pos = {};
+    lista.forEach(function (i, idx) { pos[i.id] = idx; });
+
+    function porNome(a, b) {
+      return normal(a.nome).localeCompare(normal(b.nome), "pt");
     }
-    return copia;
+    function porEntrada(a, b) { return pos[a.id] - pos[b.id]; }
+
+    if (ordem === "nome") {
+      visiveis.sort(porNome);
+    } else if (ordem === "categoria") {
+      visiveis.sort(function (a, b) {
+        var d = ORDEM_CAT[catValida(a.categoria)] - ORDEM_CAT[catValida(b.categoria)];
+        return d || porNome(a, b);
+      });
+    } else {
+      visiveis.sort(porEntrada);
+    }
+
+    // no modo mercado, o que já foi comprado desce para o fim
+    if (mercado) {
+      visiveis.sort(function (a, b) { return (a.comprado ? 1 : 0) - (b.comprado ? 1 : 0); });
+    }
+
+    return visiveis;
   }
 
   function render() {
     if (editandoId) return; // não mexe na tela enquanto alguém edita
 
-    var ordenados = ordenar(itens);
-    el.lista.innerHTML = ordenados.map(linha).join("");
+    var visiveis = preparar(itens);
+    var mercado = document.body.classList.contains("mercado");
+    var agrupar = ordem === "categoria" && !mercado;
+
+    if (agrupar) {
+      var html = "";
+      var atual = null;
+      visiveis.forEach(function (i) {
+        var cat = catValida(i.categoria);
+        if (cat !== atual) {
+          atual = cat;
+          var quantos = visiveis.filter(function (x) { return catValida(x.categoria) === cat; }).length;
+          html += '<li class="grupo-cab" role="presentation">' + escapar(cat) +
+                  ' <span class="n">' + quantos + '</span></li>';
+        }
+        html += linha(i, false);
+      });
+      el.lista.innerHTML = html;
+    } else {
+      el.lista.innerHTML = visiveis.map(function (i) { return linha(i, true); }).join("");
+    }
+
+    var buscando = !!busca;
     el.vazio.hidden = itens.length > 0;
+    el.vazioBusca.hidden = !(buscando && visiveis.length === 0 && itens.length > 0);
 
     var comprados = itens.filter(function (i) { return i.comprado; });
     var total = itens.reduce(function (s, i) { return s + totalItem(i); }, 0);
@@ -239,10 +307,15 @@
     el.btnLimpar.disabled = comprados.length === 0;
   }
 
-  function linha(i) {
+  // mostraSelo: exibe a etiqueta de categoria (não faz sentido sob um cabeçalho de grupo)
+  function linha(i, mostraSelo) {
     var qtd = num(i.quantidade) || 1;
     var preco = num(i.preco);
+    var cat = catValida(i.categoria);
     var meta = numero.format(qtd) + (preco ? " × " + dinheiro.format(preco) : " un.");
+    var selo = mostraSelo
+      ? '<span class="selo selo--' + cat + '">' + escapar(cat) + '</span>'
+      : "";
 
     return '<li class="item' + (i.comprado ? " is-comprado" : "") + '" data-id="' + escapar(i.id) + '">' +
       '<button class="marca" type="button" data-acao="marcar" aria-pressed="' + (i.comprado ? "true" : "false") +
@@ -251,7 +324,7 @@
       '</button>' +
       '<span class="item__corpo">' +
         '<span class="item__nome">' + escapar(i.nome) + '</span>' +
-        '<span class="item__meta">' + meta + '</span>' +
+        '<span class="item__meta">' + selo + meta + '</span>' +
       '</span>' +
       (preco ? '<span class="item__sub">' + dinheiro.format(qtd * preco) + '</span>' : "") +
       '<span class="item__botoes">' +
@@ -268,6 +341,9 @@
   function abrirEdicao(li, item) {
     editandoId = item.id;
     li.classList.add("item--editando");
+    var opcoes = CATEGORIAS.map(function (c) {
+      return '<option value="' + c + '"' + (catValida(item.categoria) === c ? " selected" : "") + '>' + c + '</option>';
+    }).join("");
     li.innerHTML =
       '<div class="edicao">' +
         '<input class="ed-nome" type="text" value="' + escapar(item.nome) + '" maxlength="80" aria-label="Nome">' +
@@ -275,6 +351,7 @@
           '<input class="ed-qtd" type="text" inputmode="decimal" value="' + (num(item.quantidade) || 1) + '" aria-label="Quantidade">' +
           '<input class="ed-preco" type="text" inputmode="decimal" value="' + (num(item.preco) || "") + '" placeholder="Preço un." aria-label="Preço unitário">' +
         '</div>' +
+        '<select class="ed-cat" aria-label="Categoria">' + opcoes + '</select>' +
         '<div class="edicao__acoes">' +
           '<button class="btn btn--fantasma" type="button" data-acao="cancelar">Cancelar</button>' +
           '<button class="btn btn--principal" type="button" data-acao="salvar">Salvar</button>' +
@@ -292,11 +369,12 @@
                          function (e) { terminou(e); throw e; });
   }
 
-  function adicionar(nome, qtd, preco) {
+  function adicionar(nome, qtd, preco, categoria) {
     var item = {
       nome: nome,
       quantidade: qtd || 1,
       preco: preco || 0,
+      categoria: catValida(categoria),
       comprado: false
     };
     // otimista
@@ -330,8 +408,8 @@
     acao(db.remover(item.id)).catch(function () { itens = antes; render(); });
   }
 
-  function salvarEdicao(item, nome, qtd, preco) {
-    var campos = { nome: nome, quantidade: qtd || 1, preco: preco || 0 };
+  function salvarEdicao(item, nome, qtd, preco, categoria) {
+    var campos = { nome: nome, quantidade: qtd || 1, preco: preco || 0, categoria: catValida(categoria) };
     Object.assign(item, campos);
     editandoId = null;
     render();
@@ -345,9 +423,11 @@
     e.preventDefault();
     var nome = el.inNome.value.trim();
     if (!nome) return;
-    adicionar(nome, num(el.inQtd.value), num(el.inPreco.value));
+    var cat = el.inCat.value;
+    adicionar(nome, num(el.inQtd.value), num(el.inPreco.value), cat);
     el.form.reset();
     el.inQtd.value = "1";
+    el.inCat.value = cat; // mantém a categoria para o próximo item
     el.inNome.focus();
   });
 
@@ -364,7 +444,20 @@
 
     if (acaoNome === "marcar") marcar(item);
 
-    else if (acaoNome === "editar") abrirEdicao(li, item);
+    else if (acaoNome === "editar") {
+      // no modo mercado a edição não cabe; desliga o modo e abre a edição
+      if (document.body.classList.contains("mercado")) {
+        el.modoMercado.checked = false;
+        document.body.classList.remove("mercado");
+        try { localStorage.setItem("carrinho:mercado", ""); } catch (e) {}
+        render();
+        // após o render a <li> antiga foi recriada; localiza a nova pelo id
+        var novaLi = el.lista.querySelector('.item[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+        if (novaLi) { abrirEdicao(novaLi, item); novaLi.scrollIntoView({ block: "center", behavior: "smooth" }); }
+      } else {
+        abrirEdicao(li, item);
+      }
+    }
 
     else if (acaoNome === "remover") remover(item);
 
@@ -373,7 +466,12 @@
     else if (acaoNome === "salvar") {
       var nome = li.querySelector(".ed-nome").value.trim();
       if (!nome) { li.querySelector(".ed-nome").focus(); return; }
-      salvarEdicao(item, nome, num(li.querySelector(".ed-qtd").value), num(li.querySelector(".ed-preco").value));
+      salvarEdicao(
+        item, nome,
+        num(li.querySelector(".ed-qtd").value),
+        num(li.querySelector(".ed-preco").value),
+        li.querySelector(".ed-cat").value
+      );
     }
   });
 
@@ -401,6 +499,25 @@
   el.modoMercado.addEventListener("change", function () {
     document.body.classList.toggle("mercado", el.modoMercado.checked);
     try { localStorage.setItem("carrinho:mercado", el.modoMercado.checked ? "1" : ""); } catch (e) {}
+    render();
+  });
+
+  el.inBusca.addEventListener("input", function () {
+    busca = el.inBusca.value.trim();
+    el.btnLimparBusca.hidden = !busca;
+    render();
+  });
+  el.btnLimparBusca.addEventListener("click", function () {
+    busca = "";
+    el.inBusca.value = "";
+    el.btnLimparBusca.hidden = true;
+    el.inBusca.focus();
+    render();
+  });
+
+  el.inOrdenar.addEventListener("change", function () {
+    ordem = el.inOrdenar.value;
+    try { localStorage.setItem("carrinho:ordem", ordem); } catch (e) {}
     render();
   });
 
@@ -473,6 +590,8 @@
       el.modoMercado.checked = true;
       document.body.classList.add("mercado");
     }
+    var ordemSalva = localStorage.getItem("carrinho:ordem");
+    if (ordemSalva) { ordem = ordemSalva; el.inOrdenar.value = ordemSalva; }
   } catch (e) {}
 
   puxarTitulo();

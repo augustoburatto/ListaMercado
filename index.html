@@ -80,9 +80,36 @@
         <span>Preço un.</span>
         <input id="in-preco" type="text" inputmode="decimal" placeholder="0,00" aria-label="Preço unitário">
       </label>
+      <label class="campo campo--cat">
+        <span>Categoria</span>
+        <select id="in-cat" aria-label="Categoria">
+          <option value="Mercearia">Mercearia</option>
+          <option value="Higiene">Higiene</option>
+          <option value="Congelados">Congelados</option>
+        </select>
+      </label>
       <button class="btn btn--principal" type="submit">Adicionar</button>
     </div>
   </form>
+
+  <!-- Buscar e ordenar -->
+  <div class="filtros">
+    <div class="busca">
+      <svg class="busca__lupa" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.2-3.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="in-busca" class="busca__campo" type="search" placeholder="Buscar item" aria-label="Buscar item pelo nome">
+      <button id="btn-limpar-busca" class="busca__limpar" type="button" aria-label="Limpar busca" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <label class="ordenar">
+      <span>Ordenar</span>
+      <select id="in-ordenar" aria-label="Ordenar lista">
+        <option value="adicionado">Ordem de entrada</option>
+        <option value="categoria">Categoria</option>
+        <option value="nome">Nome (A–Z)</option>
+      </select>
+    </label>
+  </div>
 
   <!-- Controles da lista -->
   <div class="barra-lista">
@@ -98,6 +125,10 @@
 
   <p id="vazio" class="vazio" hidden>
     A lista está limpa.<br><span>Escreva o primeiro item aí em cima.</span>
+  </p>
+
+  <p id="vazio-busca" class="vazio" hidden>
+    Nada encontrado.<br><span>Nenhum item com esse nome.</span>
   </p>
 
 </main>
